@@ -1,0 +1,12 @@
+name: Github-script-exec
+on:
+  workflow_dispatch:
+jobs:
+  testExec:
+    runs-on: ubuntu-latest
+    steps:
+      - name: testExec
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await exec.exec('bash', ['-c', 'ls']);

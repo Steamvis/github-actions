@@ -1,0 +1,91 @@
+name: Issue
+permissions: 
+  issues: write
+on:
+  workflow_dispatch:
+    inputs:
+      createIssue:
+        default: false
+        type: boolean
+jobs:
+  createIssue:
+    if: inputs.createIssue
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            console.log(context)
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Test create issue ' + new Date,
+              body: '👋 Thanks for reporting!',
+            })
+  failureJob:
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 1
+  findLastIssue:
+    runs-on: ubuntu-latest
+    needs: failureJob
+    outputs:
+      issue_number: ${{ steps.find-last-issue.outputs.result }}
+    steps:
+      - uses: actions/github-script@v7
+        id: find-last-issue
+        with:
+          result-encoding: string
+          script: |
+            const run_id = process.env.GITHUB_RUN_ID;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const issues = await github.rest.issues.listForRepo({
+              owner,
+              repo,
+              state: 'open',
+              sort: 'created',
+              direction: 'desc',
+              per_page: 1
+            })
+
+            console.log(issues.data[0].number)
+            return issues.data[0].number;
+  createArtifact:
+    runs-on: ubuntu-latest
+    needs: failureJob
+    if: failure()
+    steps:
+      - name: Create text file
+        run: echo "Test test2" > ${{ github.workspace }}/testfile
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: testfile
+          path: ${{ github.workspace }}/testfile
+          retention-days: 10
+          compression-level: 9
+  sendArtifactToIssue:
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: [failureJob, createArtifact, createIssue, findLastIssue]
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const run_id = process.env.GITHUB_RUN_ID;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const artifacts_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
+
+            github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: ${{ needs.findLastIssue.outputs.issue_number }},
+              body: `👋 artifact url ${artifacts_url}`
+            })
