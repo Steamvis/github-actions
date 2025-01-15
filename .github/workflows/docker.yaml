@@ -1,0 +1,11 @@
+name: Docker
+on:
+  workflow_dispatch: 
+jobs:
+    terraform:
+      runs-on: ubuntu-latest
+      container:
+        image: hashicorp/terraform
+      steps:
+        - name: Check terraform version
+          run: terraform --version

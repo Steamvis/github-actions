@@ -1,0 +1,12 @@
+name: Calendar
+on: 
+  workflow_dispatch: 
+jobs:
+  date:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Release Version
+        run: echo "BUILD_VERSION=$(date --rfc-3339=date)" >> $GITHUB_ENV
+
+      - name: use the variable
+        run: echo ${{ env.BUILD_VERSION }}

@@ -1,0 +1,32 @@
+name: Artifacts
+on:
+  workflow_dispatch:
+    inputs:
+      os_version:
+        default: ubuntu-latest
+        required: true
+        type: string
+jobs:
+  uploadArtifact:
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - name: Create text file
+        run: echo "Test test2" > ${{ github.workspace }}/testfile
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: testfile
+          path: ${{ github.workspace }}/testfile
+          retention-days: 10
+          compression-level: 9
+  
+  downloadArtifact:
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: testfile
+          path: ${{ github.workspace }}/testfile
+      - name: Show files downloaded
+        run: ls ${{github.workspace}}

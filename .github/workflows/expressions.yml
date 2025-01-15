@@ -1,0 +1,122 @@
+name: Expressions
+env:
+  FRUITS: ("apple", "orange", "cherry")
+on:
+  workflow_dispatch:
+    inputs:
+      os_version:
+        default: ubuntu-latest
+        required: true
+        type: string
+
+jobs:
+  equal:
+    if: ${{ github.ref == 'refs/heads/master'}}
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - run: echo "branch ${{ github.ref }}"
+  not-equal-main:
+    if: ${{ github.ref != 'refs/heads/main'}}
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - run: echo "branch ${{ github.ref }} not equal 'main'"
+  contains:
+    if: ${{ contains(github.ref, 'master') }}
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - run: echo "check ref contains master"
+  startWith:
+    if: ${{ startsWith(inputs.os_version, 'ubuntu') }}
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - run: echo "check os version start with ubuntu"
+  endsWith:
+    if: ${{ endsWith(github.ref_name, 'ster') }}
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - run: echo "${{ github.ref_name }} ends with 'ster'"
+  format:
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - name: Format
+        run: |
+          echo ${{ format('Hello, {0}! Current job {1}', 'Alexey', github.job) }}
+  join:
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - run: echo '${{ join(env.FRUITS, ',') }}'
+  toolkit:
+    runs-on: ${{ inputs.os_version }}
+    steps:
+      - name: Group fields
+        run: |
+          echo "::group::Write errors"
+          echo "::error::Error message 1"
+          echo "::error::Error message 2"
+          echo "::error::Error message 3"
+          echo "::warning::Warning message 1"
+          echo "::endgroup::"
+          echo "::notice::Notice message"
+      - name: Mask Msg
+        env:
+          MSG: Mask message 
+        id: mask-msg
+        run: |
+          echo "::add-mask::$MSG"
+      - run: echo ${{ steps.mask-msg.outputs.MSG }}
+      - name: Step Summary
+        run: echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
+      - name: Set color
+        id: color-selector
+        run: echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
+      - name: Get color
+        env:
+          SELECTED_COLOR: ${{ steps.color-selector.outputs.SELECTED_COLOR }}
+        run: echo "The selected color is $SELECTED_COLOR"
+      - run: echo "{name}={value}" >> "$GITHUB_OUTPUT"
+      - name: Full fields
+        run: |
+          echo "::error file=app/main.go::Wrong format"
+          echo "::debug::Debug message"
+          echo "::warning::Warning message"
+          echo "::notice file=app/main.go,line=1,endLine=5,col=1,endColumn=5,title=notice-title::Notice message"
+      - run: |
+          echo "::workflow-command parameter1={data},parameter2={data}::{command value}"
+          echo "::error file=app.js,line=1::Missing semicolon"
+          echo "::debug::{message}"
+          echo ::warning file={name},line={line},endLine={el},title={title}::{message}
+          echo ::error file={name},line={line},endLine={el},title={title}::{message}
+          echo "::warning file=app.js,line=1,col=5,endColumn=7::Missing semicolon"
+          echo "::error file=app.js,line=1,col=5,endColumn=7::Error in app.js"
+  failure:
+    runs-on: ${{ inputs.os_version }}
+    if: failure()
+    steps:
+      - run: echo failure
+  success:
+    runs-on: ${{ inputs.os_version }}
+    if: success()
+    needs:
+      - contains
+      - endsWith
+      - equal
+      - format
+      - join
+      - not-equal-main
+      - startWith
+    steps:
+      - run: echo success
+  cancelled:
+    if: cancelled()
+    runs-on: ${{ inputs.os_version }}
+    needs:
+      - contains
+      - endsWith
+      - equal
+      - format
+      - join
+      - not-equal-main
+      - startWith
+    steps:
+      - run: echo "Job ${{ github.job }} cancelled"
+    

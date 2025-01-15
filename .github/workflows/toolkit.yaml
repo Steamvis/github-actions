@@ -1,0 +1,26 @@
+name: Toolkit
+on: 
+  workflow_dispatch:
+    inputs:
+      os_version:
+        default: ubuntu-latest
+        required: true
+        type: string
+jobs:
+        summaryFromAction:
+          runs-on: ${{ inputs.os_version }}
+          steps:
+            - name: Write Summary from Action
+              uses: actions/github-script@v7.0.1
+              with:
+                script: |
+                  await core.summary
+                    .addHeading('Test Results')
+                    .addTable([
+                      [{data: 'File', header: true}, {data: 'Result', header: true}],
+                      ['foo.js', 'Pass :white_check_mark:'],
+                      ['bar.js', 'Fail :x:'],
+                      ['test.js', 'Pass :white_check_mark:']
+                    ])
+                    .addLink('View staging deployment!', 'https://github.com')
+                    .write()
