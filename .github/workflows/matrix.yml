@@ -1,0 +1,22 @@
+name: Matrix
+on:
+    workflow_dispatch:
+jobs:
+    build:
+        strategy:
+            fail-fast: false
+            max-parallel: 3
+            matrix:
+                os_version: ["ubuntu-20.04", "ubuntu-22.04"]
+                go_version: ["1.22", "1.23"]
+        runs-on: ${{ matrix.os_version }}
+        steps:
+        - uses: actions/checkout@v4
+    
+        - name: Set up Go ${{ matrix.go_version }}
+          uses: actions/setup-go@v4
+          with:
+            go-version: ${{ matrix.go_version }}
+            
+        - name: Build ${{ matrix.go_version }}
+          run: cd app && go build -v ./... 
