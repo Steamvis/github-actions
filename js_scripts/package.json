@@ -1,0 +1,13 @@
+{
+  "name": "js_scripts",
+  "version": "1.0.0",
+  "description": "node",
+  "type": "module",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@octokit/rest": "^21.1.0"
+  }
+}

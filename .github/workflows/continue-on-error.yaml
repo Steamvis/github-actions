@@ -1,0 +1,14 @@
+name: Continue on error
+on: 
+  workflow_dispatch: 
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: create artifact
+        run: echo 234 > /tmp/file
+      - name: exit with error
+        continue-on-error: true
+        run: exit 5
+      - name: continue
+        run: echo 'continue on error'

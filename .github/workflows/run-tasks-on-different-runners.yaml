@@ -1,0 +1,19 @@
+name: Run tasks on different runners
+on:
+  push:
+jobs:
+  runOnSelfHosted:
+    runs-on: arc-runner-set # запускаем на self hosted
+    steps:
+      - name: Check out the repository to the runner
+        uses: actions/checkout@v4  
+      - name: check status
+        run: ./scripts/wait.sh 60
+  runOnSharedRunners:
+    runs-on: ubuntu-latest
+    timeout-minutes: 61
+    steps:
+      - name: Check out the repository to the runner
+        uses: actions/checkout@v4  
+      - name: check status
+        run: ./scripts/wait.sh 3600

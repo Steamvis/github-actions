@@ -1,0 +1,9 @@
+name: Sleep job
+on:
+  workflow_dispatch: 
+jobs:
+  sleep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: sleep 3600 seconds
+        run: sleep 3600
