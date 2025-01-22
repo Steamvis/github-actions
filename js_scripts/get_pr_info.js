@@ -8,6 +8,7 @@ async function run() {
     const prNumber = process.env.PR_NUMBER;
 
     const [owner, repoName] = repo.split('/');
+    console.log(owner, repoName)
 
     const octokit = new Octokit({ auth: token });
 
