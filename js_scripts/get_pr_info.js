@@ -19,12 +19,17 @@ async function run(token, repo, prNumber) {
 
     console.log('Workflows for PR #' + prNumber + ':');
     workflows.forEach(async workflow => {
-      const out = `
-      - ${workflow.name} (Run ID: ${workflow.id}) 
-        Status: ${workflow.status} ${workflow.conclusion}
-      `
+      if (workflow.name == 'Sleep job') {
+        if (workflow.status == "in_progress") {
+          const out = `
+          - ${workflow.name} (Run ID: ${workflow.id}) 
+            Status: ${workflow.status} ${workflow.conclusion}
+          `
+          
+          console.log(out.trim());
+        }
+      }
       
-      console.log(out.trim());
 
       // const workflowRuns = await octokit.rest.actions.listJobsForWorkflowRun({
       //   owner,
@@ -54,4 +59,16 @@ async function run(token, repo, prNumber) {
 const token = process.env.GITHUB_TOKEN;
 const repo = process.env.REPO;
 const prNumber = process.env.PR_NUMBER;
-run(token, repo, prNumber);
+
+run(token, repo, prNumber)
+
+// function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
+
+// (async () => {
+//   for (let i=0; i < 60; i++) {
+//       await run(token, repo, prNumber)
+//       await sleep(5000)
+//   }
+// })()
