@@ -1,9 +1,13 @@
 name: Sleep job
 on:
   workflow_dispatch: 
+    inputs:
+      sleepTime:
+        type: number
+        default: 300
 jobs:
   sleep:
     runs-on: ubuntu-latest
     steps:
-      - name: sleep 3600 seconds
-        run: sleep 3600
+      - name: sleep ${{ inputs.sleepTime }} seconds
+        run: sleep ${{ inputs.sleepTime }}
