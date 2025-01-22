@@ -7,7 +7,9 @@ async function run() {
     const repo = process.env.REPO;
     const prNumber = process.env.PR_NUMBER;
 
+    /* */
     const [owner, repoName] = repo.split('/');
+    console.log(owner, repoName)
 
     const octokit = new Octokit({ auth: token });
 
@@ -22,7 +24,7 @@ async function run() {
 
     console.log('Workflows for PR #' + prNumber + ':');
     workflows.forEach(workflow => {
-      console.log(`- ${workflow.name} (Run ID: ${workflow.id})`);
+      console.log(`- ${workflow.name} (Run ID: ${workflow.id}) Status: ${workflow.status}`);
     });
   } catch (error) {
     core.setFailed(error.message);

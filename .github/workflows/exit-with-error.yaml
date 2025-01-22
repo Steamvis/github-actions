@@ -1,0 +1,9 @@
+name: Exit with error
+on: 
+  workflow_dispatch: 
+jobs:
+  exit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: exit with error
+        run: exit 1
