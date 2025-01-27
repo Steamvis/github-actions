@@ -62,16 +62,13 @@ jobs:
           */
           async function getPullRequestBody(owner, repo, pullRequestID) {
             try {
-              console.log(owner, repo, pullRequestID)
               const { data } = await github.rest.pulls.get({
                 owner: owner,
                 repo: repo,
                 pull_number: pullRequestID,
               });
 
-              console.log(data)
-
-              return data[0].body;
+              return data.body;
             } catch (error) {
               core.error(error);
             }
