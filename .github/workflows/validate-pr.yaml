@@ -64,9 +64,9 @@ jobs:
             try {
               console.log(owner, repo, pullRequestID)
               const { data } = await github.rest.pulls.get({
-                owner,
-                repo,
-                pullRequestID,
+                owner: owner,
+                repo: repo,
+                pull_number: pullRequestID,
               });
 
               console.log(data)
