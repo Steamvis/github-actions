@@ -61,7 +61,7 @@ jobs:
           */
           async function getPullRequestBody(owner, repo, pullRequestID) {
             try {
-              const { data } = await octokit.rest.pulls.get({
+              const { data } = await github.rest.pulls.get({
                 owner,
                 repo,
                 pullRequestID,
