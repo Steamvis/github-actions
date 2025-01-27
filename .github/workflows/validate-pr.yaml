@@ -60,6 +60,7 @@ jobs:
           * @param {number} pullRequestID
           */
           async function getPullRequestBody(owner, repo, pullRequestID) {
+            console.log(pullRequestID)
             try {
               const { data } = await github.rest.pulls.get({
                 owner,
