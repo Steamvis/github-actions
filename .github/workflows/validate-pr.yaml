@@ -1,7 +1,7 @@
 name: Validate Pull Request Changes
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, milestoned, demilestoned]
 
 # Cancel in-progress jobs for the same PR (pull_request_target event) or for the same branch (push event).
 concurrency:
@@ -18,7 +18,7 @@ jobs:
         node-version: '20.x'
     - run: npm install yaml marked
     - name: Check pr changes
-      uses: actions/github-script
+      uses: actions/github-script@v7
       with:
         script: |
           const [owner, repo] = [context.repo.owner, context.repo.repo];
