@@ -132,4 +132,5 @@ jobs:
             core.info("Changes is valid");
           } catch (error) {
             core.error(error);
+            process.exit(1);
           }
