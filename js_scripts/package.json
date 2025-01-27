@@ -8,6 +8,11 @@
   "license": "ISC",
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@octokit/rest": "^21.1.0"
+    "@actions/github": "^6.0.0",
+    "@octokit/rest": "^21.1.0",
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "marked": "^15.0.6",
+    "yaml": "^2.7.0"
   }
 }
