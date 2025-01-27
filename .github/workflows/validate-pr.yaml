@@ -67,6 +67,8 @@ jobs:
                 pullRequestID,
               });
 
+              console.log(data)
+
               return data[0].body;
             } catch (error) {
               core.error(error);
