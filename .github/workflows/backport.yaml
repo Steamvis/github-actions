@@ -1,4 +1,4 @@
-name: Run automatic cherry-pick on backport PRs
+name: Backport
 
 on:
   pull_request:
@@ -6,6 +6,7 @@ on:
       - closed
     branches:
       - main
+      - master
 jobs:
   cherry_pick_backport:
     if: ${{ github.event.pull_request.merged == true }}
