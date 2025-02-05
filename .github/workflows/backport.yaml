@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cherry-pick
-        uses: deckhouse/backport-action@master
+        uses: deckhouse/backport-action@v1.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: "release-1.0"
