@@ -1,6 +1,11 @@
 import { Octokit } from '@octokit/rest';
+import { find } from './find-sections.js';
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
+const rootDirs = ['.', 'modules'];
+const excludePatterns = ['^\\.', 'CHANGELOG', '^ee$', '^modules$'];
+const allowedSections = find(rootDirs, excludePatterns);
 
 /**
  * @type {string}
@@ -15,31 +20,29 @@ import { marked } from 'marked';
 import YAML from 'yaml';
 
 /**
- * 
- * @param {string} markdownString 
- * @param {string} header 
+ *
+ * @param {string} markdownString
+ * @param {string} header
  * @returns {string}
  */
 function findSectionInMarkdown(markdownString, header) {
-    const tokens = marked.lexer(markdownString);
-    const headerIndex = tokens.findIndex( 
-        (token) => token.type === 'heading' && token.text.toLowerCase() === header.toLowerCase()
-    );
+  const tokens = marked.lexer(markdownString);
+  const headerIndex = tokens.findIndex(
+    (token) => token.type === 'heading' && token.text.toLowerCase() === header.toLowerCase()
+  );
 
-    if (headerIndex === -1) return null;
+  if (headerIndex === -1) return null;
 
-    let result;
-    for (let i = headerIndex + 1; i < tokens.length; i++) {
-        if (tokens[i].lang === 'changes') {
-            result = tokens[i].text
-            break
-        }
+  let result;
+  for (let i = headerIndex + 1; i < tokens.length; i++) {
+    if (tokens[i].lang === 'changes') {
+      result = tokens[i].text;
+      break;
     }
-    
-    return result;
+  }
+
+  return result;
 }
-
-
 
 /**
  *
@@ -55,7 +58,7 @@ async function getPR(owner, repo, pullRequestID) {
       pullRequestID,
     });
 
-    return data[0].body
+    return data[0].body;
   } catch (error) {
     console.error(error);
   }
@@ -69,16 +72,22 @@ const changelogEntries = findSectionInMarkdown(prBody, 'Changelog entries');
  *
  * @param {object} block
  * @param {number} index
+ * @param {string[]} allowedSections
  * @returns
  */
-function validateYaml(block, index) {
+function validateYaml(block, index, allowedSections) {
   if (
     block.section === undefined ||
     block.section === null ||
     block.section.length === 0 ||
     block.section === '<kebab-case of a module name> | <1st level dir in the repo>'
   ) {
-    throw new Error(`'section' is required and must be a non-empty string in block ${index}`);
+    throw new Error(`'section' is required and must be a non-empty string and allowed section in block ${index}`);
+  }
+
+  if (!allowedSections.includes(block.section)) {
+    console.log('Allowed sections:', allowedSections.join(', '))
+    throw new Error(`'section' is required and must be a non-empty string and allowed section in block ${index}`);
   }
 
   if (
@@ -116,8 +125,11 @@ function validateYaml(block, index) {
 
 let changesBlocks = changelogEntries.split('---');
 try {
-  changesBlocks.forEach((changeBlock, idx) => validateYaml(YAML.parse(changeBlock.trim()), idx + 1));
-  console.log("Changes is valid")
+  const yamlBlocks = changesBlocks.forEach((changeBlock, idx) =>
+    validateYaml(YAML.parse(changeBlock.trim()), idx + 1, allowedSections)
+  );
+
+  console.log('Changes is valid');
 } catch (error) {
   console.error(error);
 }

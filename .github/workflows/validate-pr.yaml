@@ -1,8 +1,7 @@
 name: Validate Pull Request Changes
 on:
   pull_request:
-    types: [opened, synchronize, reopened, milestoned, demilestoned, edited]
-  workflow_dispatch: 
+    types: [opened, synchronize, reopened, edited]
 
 # Cancel in-progress jobs for the same PR (pull_request_target event) or for the same branch (push event).
 concurrency:
@@ -10,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check-pr-changes:
+  validate-pr-changes:
     name: Validate Pull Request Changes
     runs-on: ubuntu-latest
     steps:

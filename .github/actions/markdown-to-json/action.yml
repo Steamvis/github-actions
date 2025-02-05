@@ -1,0 +1,25 @@
+name: Parse Markdown
+description: Parse markdown document to json
+inputs:
+  markdown_string:
+    description: markdown string
+    required: true
+outputs:
+  markdown_json:
+    description: markdown json
+    value: ${{ steps.markdown_to_json.outputs.result }}
+  
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+    - shell: bash
+      run: npm install marked
+    - name: markdown to json
+      shell: bash
+      id: markdown_to_json
+      run: |
+        echo "result=value" >> $GITHUB_OUTPUT
+

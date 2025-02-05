@@ -1,0 +1,1 @@
+https://typescript-handbook.ru/docs/ts-1
