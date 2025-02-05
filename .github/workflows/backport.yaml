@@ -47,22 +47,17 @@ jobs:
             })
             core.setOutput('commit', response.data.merge_commit_sha)
 
-backport_to_release_branch:
+  backport_to_release_branch:
     runs-on: ubuntu-latest
-    needs: [detect_pr_by_label, detect_pr_by_comment]
-    if: always() && (needs.detect_pr_by_label.outputs.release_branch || needs.detect_pr_by_comment.outputs.release_branch)
+    needs: [detect_pr_by_comment]
+    if: always()
     steps:
       - name: Detect source
         id: prepare
         run: |
-          releaseBranch=${{needs.detect_pr_by_label.outputs.release_branch}}
-          commit=${{needs.detect_pr_by_label.outputs.commit}}
-          prNumber=${{needs.detect_pr_by_label.outputs.pr_number}}
-          if [ -z $releaseBranch ]; then
-            releaseBranch=${{needs.detect_pr_by_comment.outputs.release_branch}}
-            commit=${{needs.detect_pr_by_comment.outputs.commit}}
-            prNumber=${{needs.detect_pr_by_comment.outputs.pr_number}}
-          fi
+          releaseBranch=${{needs.detect_pr_by_comment.outputs.release_branch}}
+          commit=${{needs.detect_pr_by_comment.outputs.commit}}
+          prNumber=${{needs.detect_pr_by_comment.outputs.pr_number}}
           echo "release_branch=${releaseBranch}" >> $GITHUB_OUTPUT
           echo "commit=${commit}" >> $GITHUB_OUTPUT
           echo "pr_number=${prNumber}" >> $GITHUB_OUTPUT
