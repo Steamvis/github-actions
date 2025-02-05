@@ -85,7 +85,6 @@ jobs:
           COMMIT_SHA: ${{ steps.prepare.outputs.commit }}
           SOURCE_PR_NUMBER: ${{ steps.prepare.outputs.pr_number }}
         with:
-          token: ${{ secrets.BOATSWAIN_GITHUB_TOKEN }}
           branch: ${{ env.RELEASE_BRANCH }}
           commit: ${{ env.COMMIT_SHA }}
           labels: auto,backported
