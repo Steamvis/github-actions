@@ -15,6 +15,7 @@ jobs:
 
             console.log(context)
 
-            if (context.sender.login == 'Steamvis') {
+            if (context.payload.sender.login == 'Steamvis') {
               console.log('here');
             }
+            
